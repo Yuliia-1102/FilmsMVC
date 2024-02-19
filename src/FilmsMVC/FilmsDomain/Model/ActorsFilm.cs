@@ -9,7 +9,7 @@ public partial class ActorsFilm : Entity
 
     public int ActorId { get; set; }
 
-    public string Role { get; set; } = null!;
+    public string? Role { get; set; }
 
     public virtual Actor Actor { get; set; } = null!;
 

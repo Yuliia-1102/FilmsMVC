@@ -1,0 +1,104 @@
+﻿@model FilmsDomain.Model.Film
+
+@{
+    ViewData["Title"] = "Детальніше";
+}
+
+<h1>Детальніше</h1>
+
+<div>
+    <h4>Фільм #@Model.Id</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ReleaseYear)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ReleaseYear)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TrailerLink)
+        </dt>
+        <dd class = "col-sm-10">
+            <a href="@Model.TrailerLink" target="_blank">Переглянути трейлер</a>
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Price грн
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BoxOffice)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BoxOffice)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Director)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Director.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Genre)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Genre.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ActorsFilms)
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                var actorsFilms = Model.ActorsFilms.ToList();
+                for (int i = 0; i < actorsFilms.Count; i++)
+                {
+                    <span>@actorsFilms[i].Actor.Name (@actorsFilms[i].Role)@(i < actorsFilms.Count - 1 ? "," : "")</span>
+                    if (i < actorsFilms.Count - 1)
+                    {
+                        <span> </span>
+                    }
+                }
+            }
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CountriesFilms)
+        </dt>
+        <dd class = "col-sm-10">
+            @{
+                var country = Model.CountriesFilms.ToList();
+                for (int i = 0; i < country.Count; i++)
+                {
+                    <span>@country[i].Country.Name@(i < country.Count - 1 ? "," : "")</span>
+                    if (i < country.Count - 1)
+                    {
+                        <span> </span>
+                    }
+                }
+            }
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
+    <a asp-action="Index">Назад</a>
+
+    <form asp-controller="Preorders" asp-action="AddToOrder" method="post">
+        <input type="hidden" name="filmId" value="@Model.Id" />
+        <input type="submit" value="Додати до замовлення" class="btn btn-primary" />
+    </form>
+
+</div>

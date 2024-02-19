@@ -11,7 +11,7 @@ public partial class Preorder : Entity
 
     public DateOnly PreorderDate { get; set; }
 
-    public virtual Customer Customer { get; set; } = null!;
+    public virtual Customer? Customer { get; set; }
 
-    public virtual Film Film { get; set; } = null!;
+    public virtual Film? Film { get; set; }
 }

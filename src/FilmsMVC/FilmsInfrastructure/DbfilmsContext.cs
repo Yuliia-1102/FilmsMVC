@@ -4,6 +4,7 @@ using FilmsDomain.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilmsInfrastructure;
+
 public partial class DbfilmsContext : DbContext
 {
     public DbfilmsContext()
@@ -11,7 +12,7 @@ public partial class DbfilmsContext : DbContext
     }
 
     public DbfilmsContext(DbContextOptions<DbfilmsContext> options)
-        : base(options)
+        : base(options) //Виклик конструктора з цим параметром (options) з базового класу - DbContext 
     {
     }
 
@@ -48,7 +49,6 @@ public partial class DbfilmsContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_ActorsFilms_1");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Role).HasMaxLength(30);
 
             entity.HasOne(d => d.Actor).WithMany(p => p.ActorsFilms)
@@ -65,8 +65,6 @@ public partial class DbfilmsContext : DbContext
         modelBuilder.Entity<CountriesFilm>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_CountriesFilms_1");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
 
             entity.HasOne(d => d.Country).WithMany(p => p.CountriesFilms)
                 .HasForeignKey(d => d.CountryId)
