@@ -4,33 +4,34 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Детальніше</h1>
 
 <div>
-    <h4>Preorder</h4>
+    <h4>Замовлення #@Model.Id</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Customer)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Customer.Email)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Film)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Film.Name)
+		</dd>
+		<dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PreorderDate)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.PreorderDate)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Customer)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Customer.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Film)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Film.Description)
-        </dd>
+
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
+    <a asp-action="Index">Назад</a>
 </div>

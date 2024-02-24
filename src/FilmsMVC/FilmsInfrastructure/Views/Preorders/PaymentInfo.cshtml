@@ -1,0 +1,18 @@
+﻿@using System.Security.Claims
+
+@model FilmsDomain.Model.Customer
+
+@{
+    var totalPrice = TempData["TotalPrice"];
+}
+
+<h2>Введіть необхідні дані</h2>
+
+<form asp-controller="Preorders" asp-action="ProcessPayment" method="post">
+    <div class="form-group">
+        <label for="cardNumber">Номер кредитної картки</label>
+        <input type="text" class="form-control" id="cardNumber" name="CardNumber" required minlength="16" maxlength="16" pattern="\d{16}" title="Номер кредитної картки повинен містити 16 цифр">
+    </div>
+    <div>Сума до сплати: @totalPrice грн</div>
+    <input type="submit" value="Оплатити" class="btn btn-primary" />
+</form>

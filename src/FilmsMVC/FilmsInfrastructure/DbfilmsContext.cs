@@ -117,6 +117,8 @@ public partial class DbfilmsContext : DbContext
 
         modelBuilder.Entity<Preorder>(entity =>
         {
+            entity.Property(e => e.Status).HasMaxLength(20);
+
             entity.HasOne(d => d.Customer).WithMany(p => p.Preorders)
                 .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

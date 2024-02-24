@@ -2,6 +2,37 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4"></h1>
+<div class="row">
+    <h1> Новинки </h1>
+
+    <div class="card-group">
+        <div class="card">
+            <img src="https://itc.ua/wp-content/uploads/2023/07/oppenheimer-2023-movie-poster-hd-wallpaper-uhdpaper.com-719-1-k.jpg" class="card-img-top">
+            <div class="card-body">
+                <a asp-controller="Films" asp-action="Details" asp-route-id="1"><h3 class="card-title"> Оппенгеймер </h3></></a>
+                <p class="card-text">Під час Другої світової війни вчений-фізик Оппенгеймер займався безпрецедентним створенням атомної зброї, розробка якої відбувалася згідно із запущеним Мангеттенським проєктом. Усі ці події спричинили низку змін.</p>
+                <p class="card-text"><small class="text-muted">180 хвилин</small></p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="https://img.tsn.ua/cached/217/tsn-5158ca2e1423d82bb1a288ac9a4ee131/thumbs/1116x628/11/39/3c3186d4df85b73e31dc1e8e52663911.jpg" class="card-img-top">
+            <div class="card-body">
+                <a asp-controller="Films" asp-action="Details" asp-route-id="4"><h3 class="card-title"> П'ятий елемент </h3></></a>
+                <p class="card-text">Абсолютне Зло, у вигляді гігантської чорної планети, летить на Землю з глибин Галактики з величезною швидкістю. Колишній суперагент, а тепер простий таксист Корбен Даллас, повинен врятувати світ від жахливої ​​катастрофи.</p>
+                <p class="card-text"><small class="text-muted">113 хвилин</small></p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="https://tykyiv.com/media/%D0%9B%D1%8E%D0%BA%D1%81%D0%B5%D0%BC%D0%B1%D1%83%D1%80%D0%B3_%D0%9B%D1%8E%D0%BA%D1%81%D0%B5%D0%BC%D0%B1%D1%83%D1%80%D0%B3.png" class="card-img-top">
+            <div class="card-body">
+                <a asp-controller="Films" asp-action="Details" asp-route-id="36"><h3 class="card-title"> Люксембург, Люксембург </h3></></a>
+                <p class="card-text">Батьком близнюків Колі та Васі було покинуто ще в дитинстві. Зараз він перебуває на смертному ложі в Люксембурзі. Дізнавшись про це, брати вирішують вирушити на його пошуки. Василь вважає батька негідником, тоді як Коля вважає його героєм.</p>
+                <p class="card-text"><small class="text-muted">105 хвилин</small></p>
+            </div>
+        </div>
+    </div>
+
+    <a class="btn btn-success btn-lg" asp-controller="Films" asp-action="Index">Перейти до списку фільмів</a>
+
+
 </div>

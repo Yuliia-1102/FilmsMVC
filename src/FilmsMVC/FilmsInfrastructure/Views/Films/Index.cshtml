@@ -4,11 +4,45 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Список фільмів</h1>
+<form asp-action="Search" method="post">
+    <div class="mb-3">
+        <label class="form-label">Вкажіть жанр</label>
+        <select class="form-select" asp-items="ViewBag.GenreId" name="genre">
+            <option value=""></option>
+        </select>
+    </div>
 
-@*<p>
-    <a asp-action="Create">Додати фільм</a>
-</p>*@
+    <div class="mb-3">
+        <label class="form-label">Вкажіть режисера</label>
+        <select class="form-select" asp-items="ViewBag.DirectorId" name="director">
+            <option value=""></option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Вкажіть країну</label>
+        <select class="form-select" asp-items="ViewBag.CountriesFilms" name="country">
+            <option value=""></option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Вкажіть актора(-ису)</label>
+        <select class="form-select" asp-items="ViewBag.ActorsFilms" name="actor">
+            <option value=""></option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Пошук</button>
+    </div>
+</form>
+
+
+<h1>Список фільмів</h1>
+<p>
+    <a asp-action="CreateInFilm">Додати фільм</a>
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -44,5 +78,6 @@
             </td>
         </tr>
 }
+        
     </tbody>
 </table>

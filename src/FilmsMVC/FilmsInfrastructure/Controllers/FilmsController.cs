@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using FilmsDomain.Model;
 using FilmsInfrastructure;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
+using System.IO;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FilmsInfrastructure.Controllers
 {
@@ -23,6 +25,11 @@ namespace FilmsInfrastructure.Controllers
         // GET: Films from Films
         public async Task<IActionResult> Index()
         {
+            ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name");
+            ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name");
+            ViewData["CountriesFilms"] = new SelectList(_context.Countries, "Id", "Name");
+            ViewData["ActorsFilms"] = new SelectList(_context.Actors, "Id", "Name");
+
             var dbfilmsContext = _context.Films.Include(f => f.Director).Include(f => f.Genre);
             return View(await dbfilmsContext.ToListAsync());
         }
@@ -40,6 +47,21 @@ namespace FilmsInfrastructure.Controllers
                 .Include(f => f.CountriesFilms).ThenInclude(f => f.Country);
 
             return View(await filmByDirector.ToListAsync());
+        }
+
+        // GET: Films from Genres
+        public async Task<IActionResult> IndexGenre(int? id, string? name)
+        {
+            if (id == null) return RedirectToAction("Genres", "Index");
+
+            ViewBag.GenreId = id;
+            ViewBag.GenreName = name;
+
+            var filmByGenre = _context.Films.Where(f => f.GenreId == id).Include(f => f.Genre)
+                .Include(f => f.ActorsFilms).ThenInclude(f => f.Actor)
+                .Include(f => f.CountriesFilms).ThenInclude(f => f.Country);
+
+            return View(await filmByGenre.ToListAsync());
         }
 
         // GET: Films/Details/5
@@ -63,6 +85,9 @@ namespace FilmsInfrastructure.Controllers
             {
                 return NotFound();
             }
+
+            var isPurchased = await IsFilmPurchased(film.Id);
+            ViewData["IsPurchased"] = isPurchased;
 
             return View(film);
         }
@@ -103,6 +128,44 @@ namespace FilmsInfrastructure.Controllers
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("IndexDirector", "Films", new { id = directorId, name = _context.Directors.Where(d => d.Id == directorId).First().Name });
+            //}
+            //ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name", film.DirectorId);
+            //ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name", film.GenreId);
+            //return View(film);
+            //return RedirectToAction("IndexDirector", "Films", new { id = directorId, name = _context.Directors.Where(d => d.Id == directorId).First().Name });
+        }
+
+        public IActionResult CreateInFilm()
+        {
+            ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name");
+            ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name");
+            ViewData["CountriesFilms"] = new SelectList(_context.Countries, "Id", "Name");
+            ViewData["ActorsFilms"] = new SelectList(_context.Actors, "Id", "Name");
+
+            return View();
+        }
+
+        // POST: Films/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateInFilm([Bind("DirectorId,GenreId,Name,Description,ReleaseYear,TrailerLink,Price,BoxOffice,Id")] Film film, List<int> Countries, List<int> Actors)
+        {
+            foreach (var countryId in Countries)
+            {
+                film.CountriesFilms.Add(new CountriesFilm { CountryId = countryId });
+            }
+
+            foreach (var actorsId in Actors)
+            {
+                film.ActorsFilms.Add(new ActorsFilm { ActorId = actorsId });
+            }
+
+            //if (ModelState.IsValid)
+            //{
+            _context.Add(film);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Films");
             //}
             //ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name", film.DirectorId);
             //ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name", film.GenreId);
@@ -255,6 +318,8 @@ namespace FilmsInfrastructure.Controllers
                 return NotFound();
             }
 
+           
+
             return View(film);
         }
 
@@ -284,8 +349,8 @@ namespace FilmsInfrastructure.Controllers
 
             var film = await _context.Films.FindAsync(id);
             _context.Films.Remove(film);
-            await _context.SaveChangesAsync();
 
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -293,5 +358,35 @@ namespace FilmsInfrastructure.Controllers
         {
             return _context.Films.Any(e => e.Id == id);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Search(int? genre, int? director, int? country, int? actor)
+        {
+
+            ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name");
+            ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name");
+            ViewData["CountriesFilms"] = new SelectList(_context.Countries, "Id", "Name");
+            ViewData["ActorsFilms"] = new SelectList(_context.Actors, "Id", "Name");
+
+            var films = _context.Films.AsQueryable();
+
+            if (genre.HasValue)
+                films = films.Where(f => f.GenreId == genre);
+            if (director.HasValue)
+                films = films.Where(f => f.DirectorId == director);
+            if (country.HasValue)
+                films = films.Where(f => f.CountriesFilms.Any(cf => cf.CountryId == country));
+            if (actor.HasValue)
+                films = films.Where(f => f.ActorsFilms.Any(af => af.ActorId == actor));
+
+            return View("Index", films);
+        }
+
+        public async Task<bool> IsFilmPurchased(int filmId)
+        {
+            int customerId = 25;
+            return await _context.Preorders.AnyAsync(p => p.FilmId == filmId && p.CustomerId == customerId && p.Status == "Куплено");
+        }
+
     }
 }

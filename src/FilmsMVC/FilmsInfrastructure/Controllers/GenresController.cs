@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FilmsDomain.Model;
 using FilmsInfrastructure;
+using System.IO;
 
 namespace FilmsInfrastructure.Controllers
 {
@@ -40,7 +41,8 @@ namespace FilmsInfrastructure.Controllers
                 return NotFound();
             }
 
-            return View(genre);
+            //return View(genre);
+            return RedirectToAction("IndexGenre", "Films", new { id = genre.Id, name = genre.Name });
         }
 
         // GET: Genres/Create

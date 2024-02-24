@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FilmsDomain.Model;
 using FilmsInfrastructure;
+using Newtonsoft.Json;
 
 namespace FilmsInfrastructure.Controllers
 {
@@ -22,7 +23,13 @@ namespace FilmsInfrastructure.Controllers
         // GET: Preorders
         public async Task<IActionResult> Index()
         {
-            var dbfilmsContext = _context.Preorders.Include(p => p.Customer).Include(p => p.Film);
+            int customerId = 25; 
+
+            var dbfilmsContext = _context.Preorders
+                                         .Include(p => p.Customer)
+                                         .Include(p => p.Film)
+                                         .Where(p => p.CustomerId == customerId);
+
             return View(await dbfilmsContext.ToListAsync());
         }
 
@@ -46,53 +53,93 @@ namespace FilmsInfrastructure.Controllers
             return View(preorder);
         }
 
+		[HttpPost]
+		public async Task<IActionResult> AddToOrder(int filmId)
+		{
+			var film = await _context.Films.FindAsync(filmId);
+			if (film == null)
+			{
+				return NotFound();
+			}
+
+            int customerId = 25;
+
+            var existingPreorder = await _context.Preorders
+            .FirstOrDefaultAsync(p => p.FilmId == filmId && p.CustomerId == customerId);
+
+            if (existingPreorder == null)
+            {
+                var preorder = new Preorder
+                {
+                    FilmId = filmId,
+                    CustomerId = customerId,
+                    Status = null,
+				    PreorderDate = DateOnly.FromDateTime(DateTime.Now)
+			    };
+                _context.Preorders.Add(preorder);
+			    await _context.SaveChangesAsync();
+            }
+           
+			return RedirectToAction("Index", "Preorders");
+		}
+
         [HttpPost]
-        public async Task<IActionResult> AddToOrder(int filmId)
+        public async Task<IActionResult> Order(List<int> preordersId)
         {
-            var film = await _context.Films.FindAsync(filmId);
-            if (film == null)
+            var preorders = await _context.Preorders
+                .Where(p => preordersId.Contains(p.Id))
+                .Include(p => p.Film)
+                .ToListAsync();
+
+            if (!preorders.Any()) 
             {
-                return NotFound();
+                return RedirectToAction("Index", "Films");
             }
 
-            // Спроба знайти останнього покупця у базі даних
-            var lastCustomer = await _context.Customers.OrderByDescending(c => c.Id).FirstOrDefaultAsync();
-
-            int customerId;
-            if (lastCustomer != null)
+            if (preorders.All(p => p.Status == "Куплено"))
             {
-                // Якщо існують покупці, створюємо нового з ID на 1 більше
-                customerId = lastCustomer.Id + 1;
-            }
-            else
-            {
-                // Якщо покупців немає, створюємо першого з ID 1
-                customerId = 1;
+                return RedirectToAction("Index", new { message = "Всі фільми вже куплені." });
             }
 
-            // Перевіряємо, чи вже існує покупець з таким ID (теоретично не повинно бути, але перевірка не зашкодить)
-            var customer = await _context.Customers.FindAsync(customerId);
-            if (customer == null)
+            var totalPrice = preorders.Where(p => p.Status == null).Sum(p => p.Film.Price);
+
+            if (totalPrice > 0)
             {
-                // Якщо покупець з таким ID не існує, створюємо нового
-                customer = new Customer { /*Id = customerId, інші поля*/ };
-                _context.Customers.Add(customer);
-                await _context.SaveChangesAsync();
+                TempData["TotalPrice"] = totalPrice.ToString();
+                TempData["PreordersId"] = String.Join(",", preorders.Where(p => p.Status == null).Select(p => p.Id));
+                return RedirectToAction("PaymentInfo");
             }
 
-            var preorder = new Preorder
-            {
-                FilmId = filmId,
-                CustomerId = customerId,
-                PreorderDate = DateOnly.FromDateTime(DateTime.Now)
-            };
-
-            _context.Preorders.Add(preorder);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index", "Preorders");
+            return RedirectToAction("Index", new { message = "Немає фільмів до покупки." });
         }
 
+        public IActionResult PaymentInfo()
+        {
+            return View();
+        }
+
+
+        public async Task<IActionResult> ProcessPayment(string CardNumber)
+        {
+            var preordersIdStr = TempData["PreordersId"] as string;
+            var preordersIdList = preordersIdStr?.Split(',').Select(int.Parse).ToList();
+
+            if (preordersIdList != null && preordersIdList.Any())
+            {
+                var preordersToDelete = _context.Preorders.Where(p => preordersIdList.Contains(p.Id)).ToList();
+               
+                //List<int> filmIds = new List<int>();
+                foreach (var preorder in preordersToDelete)
+                {
+                    preorder.Status = "Куплено";
+                    //filmIds.Add(preorder.FilmId);
+                   // _context.Preorders.Remove(preorder);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index", "Preorders", new { message = "Оплата пройшла успішно. Ваші фільми доступні до перегляду." });
+        }
 
         // GET: Preorders/Create
         public IActionResult Create()
@@ -139,8 +186,6 @@ namespace FilmsInfrastructure.Controllers
         }
 
         // POST: Preorders/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("FilmId,CustomerId,PreorderDate,Id")] Preorder preorder)

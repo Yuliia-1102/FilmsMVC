@@ -1,0 +1,94 @@
+﻿@model IEnumerable<FilmsDomain.Model.Film>
+
+@{
+    ViewData["Title"] = "IndexGenre";
+}
+
+<h1>Фільми за жанром: @ViewBag.GenreName</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReleaseYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TrailerLink)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price) (грн)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BoxOffice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActorsFilms)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CountriesFilms)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReleaseYear)
+                </td>
+                <td>
+                    <a href="@item.TrailerLink" target="_blank">Подивитися трейлер</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BoxOffice)
+                </td>
+                <td>
+                    @{
+                        var actorsFilms = item.ActorsFilms.ToList();
+                        for (int i = 0; i < actorsFilms.Count; i++)
+                        {
+                            <span>@actorsFilms[i].Actor.Name (@actorsFilms[i].Role)@(i < actorsFilms.Count - 1 ? "," : "")</span>
+                            if (i < actorsFilms.Count - 1)
+                            {
+                                <span> </span>
+                            }
+                        }
+                    }
+                </td>
+                <td>
+                    @{
+                        var country = item.CountriesFilms.ToList();
+                        for (int i = 0; i < country.Count; i++)
+                        {
+                            <span>@country[i].Country.Name@(i < country.Count - 1 ? "," : "")</span>
+                            if (i < country.Count - 1)
+                            {
+                                <span> </span>
+                            }
+                        }
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

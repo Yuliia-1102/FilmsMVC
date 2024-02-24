@@ -4,6 +4,11 @@
     ViewData["Title"] = "Детальніше";
 }
 
+@{
+    var isPurchased = ViewData["IsPurchased"] as bool? ?? false;
+}
+
+
 <h1>Детальніше</h1>
 
 <div>
@@ -96,9 +101,18 @@
     <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
     <a asp-action="Index">Назад</a>
 
-    <form asp-controller="Preorders" asp-action="AddToOrder" method="post">
-        <input type="hidden" name="filmId" value="@Model.Id" />
+    @if (!isPurchased)
+    {
+        <form asp-controller="Preorders" asp-action="AddToOrder" method="post">
+        <input type="hidden" name="filmId" value="@Model.Id"  />
         <input type="submit" value="Додати до замовлення" class="btn btn-primary" />
-    </form>
+        </form>
+    }
+    else
+    {
+        <div>
+            <button class="btn btn-secondary" disabled>Куплено</button>
+        </div>
+    }
 
 </div>
