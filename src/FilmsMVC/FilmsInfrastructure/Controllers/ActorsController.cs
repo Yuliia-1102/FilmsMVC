@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FilmsDomain.Model;
 using FilmsInfrastructure;
+using System.IO;
 
 namespace FilmsInfrastructure.Controllers
 {
@@ -56,6 +57,12 @@ namespace FilmsInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Id")] Actor actor)
         {
+            if (_context.Actors.Any(g => g.Name == actor.Name))
+            {
+                ModelState.AddModelError("Name", "Такий актор вже існує.");
+                return View(actor);
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(actor);
@@ -78,6 +85,7 @@ namespace FilmsInfrastructure.Controllers
             {
                 return NotFound();
             }
+
             return View(actor);
         }
 
@@ -97,6 +105,11 @@ namespace FilmsInfrastructure.Controllers
             {
                 try
                 {
+                    if (_context.Actors.Any(g => g.Name == actor.Name))
+                    {
+                        ModelState.AddModelError("Name", "Такий актор вже існує.");
+                        return View(actor);
+                    }
                     _context.Update(actor);
                     await _context.SaveChangesAsync();
                 }

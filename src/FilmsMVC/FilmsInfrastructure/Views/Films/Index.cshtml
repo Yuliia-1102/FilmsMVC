@@ -78,6 +78,44 @@
             </td>
         </tr>
 }
+
+
         
     </tbody>
 </table>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<div id="chart_div"></div>
+
+<script>
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        fetch('/api/Chart/FilmsByYear')
+            .then(response => response.json())
+            .then(data => {
+                var dataArray = [['Рік', 'Кількість фільмів']];
+                data.forEach(item => dataArray.push([item.year.toString(), item.count]));
+
+                var data = google.visualization.arrayToDataTable(dataArray);
+
+                var options = {
+                    title: 'Кількість фільмів за певним роком',
+                    chartArea: { width: '50%' },
+                    hAxis: {
+                        title: 'Рік',
+                        minValue: 0
+                    },
+                    vAxis: {
+                        title: 'Кількість фільмів'
+                    }
+                };
+
+                var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+            });
+    }
+</script>
+
+

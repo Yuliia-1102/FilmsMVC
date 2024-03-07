@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FilmsDomain.Model;
 using FilmsInfrastructure;
+using Humanizer.Localisation;
 
 namespace FilmsInfrastructure.Controllers
 {
@@ -56,6 +57,12 @@ namespace FilmsInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Id")] Country country)
         {
+            if (_context.Countries.Any(g => g.Name == country.Name))
+            {
+                ModelState.AddModelError("Name", "Така країна вже існує.");
+                return View(country);
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(country);
@@ -97,6 +104,12 @@ namespace FilmsInfrastructure.Controllers
             {
                 try
                 {
+                    if (_context.Countries.Any(g => g.Name == country.Name))
+                    {
+                        ModelState.AddModelError("Name", "Така країна вже існує.");
+                        return View(country);
+                    }
+
                     _context.Update(country);
                     await _context.SaveChangesAsync();
                 }

@@ -122,13 +122,28 @@ namespace FilmsInfrastructure.Controllers
             }
 
             film.DirectorId = directorId;
+
+            var existingFilm = await _context.Films.FirstOrDefaultAsync(f => f.Name == film.Name);
+            if (existingFilm != null)
+            {
+                ModelState.AddModelError("Name", "Фільм з такою назвою вже існує.");
+                return Create(directorId);
+            }
+            else
             //if (ModelState.IsValid)
             //{
+            {
                 _context.Add(film);
                 await _context.SaveChangesAsync();
-
                 return RedirectToAction("IndexDirector", "Films", new { id = directorId, name = _context.Directors.Where(d => d.Id == directorId).First().Name });
-            //}
+            }
+
+
+            //_context.Add(film);
+            ///await _context.SaveChangesAsync();
+
+            //return RedirectToAction("IndexDirector", "Films", new { id = directorId, name = _context.Directors.Where(d => d.Id == directorId).First().Name });
+          
             //ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name", film.DirectorId);
             //ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name", film.GenreId);
             //return View(film);
@@ -160,12 +175,21 @@ namespace FilmsInfrastructure.Controllers
                 film.ActorsFilms.Add(new ActorsFilm { ActorId = actorsId });
             }
 
+            var existingFilm = await _context.Films.FirstOrDefaultAsync(f => f.Name == film.Name);
+            if (existingFilm != null)
+            {
+                ModelState.AddModelError("Name", "Фільм з такою назвою вже існує.");
+                return CreateInFilm();
+;            }
+            else
             //if (ModelState.IsValid)
             //{
-            _context.Add(film);
-            await _context.SaveChangesAsync();
+            {
+                _context.Add(film);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Films");
+            }
 
-            return RedirectToAction("Index", "Films");
             //}
             //ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name", film.DirectorId);
             //ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name", film.GenreId);
@@ -207,6 +231,8 @@ namespace FilmsInfrastructure.Controllers
             }
 
            var filmToUpdate = await _context.Films
+                               .Include(f => f.Director)
+                               .Include(f => f.Genre)
                                .Include(f => f.CountriesFilms)
                                .Include(f => f.ActorsFilms)
                                .FirstOrDefaultAsync(f => f.Id == id);
@@ -215,6 +241,15 @@ namespace FilmsInfrastructure.Controllers
             {
                 return NotFound();
             }
+
+            filmToUpdate.Name = film.Name;
+            filmToUpdate.Description = film.Description;
+            filmToUpdate.ReleaseYear = film.ReleaseYear;
+            filmToUpdate.TrailerLink = film.TrailerLink;
+            filmToUpdate.Price = film.Price;
+            filmToUpdate.BoxOffice = film.BoxOffice;
+            filmToUpdate.GenreId = film.GenreId;
+            filmToUpdate.DirectorId = film.DirectorId;
 
             // Оновлення акторів
             var currentActorIds = filmToUpdate.ActorsFilms.Select(af => af.ActorId).ToList();
@@ -362,7 +397,6 @@ namespace FilmsInfrastructure.Controllers
         [HttpPost]
         public async Task<IActionResult> Search(int? genre, int? director, int? country, int? actor)
         {
-
             ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name");
             ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name");
             ViewData["CountriesFilms"] = new SelectList(_context.Countries, "Id", "Name");

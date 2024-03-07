@@ -58,6 +58,12 @@ namespace FilmsInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Id")] Genre genre)
         {
+            if (_context.Genres.Any(g => g.Name == genre.Name))
+            {
+                ModelState.AddModelError("Name", "Такий жанр вже існує.");
+                return View(genre);
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(genre);
@@ -99,6 +105,11 @@ namespace FilmsInfrastructure.Controllers
             {
                 try
                 {
+                    if (_context.Genres.Any(g => g.Name == genre.Name))
+                    {
+                        ModelState.AddModelError("Name", "Такий жанр вже існує.");
+                        return View(genre);
+                    }
                     _context.Update(genre);
                     await _context.SaveChangesAsync();
                 }
