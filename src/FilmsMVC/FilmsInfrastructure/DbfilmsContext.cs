@@ -94,7 +94,7 @@ public partial class DbfilmsContext : DbContext
 
         modelBuilder.Entity<Film>(entity =>
         {
-            entity.Property(e => e.BoxOffice).HasMaxLength(40);
+            //entity.Property(e => e.BoxOffice).HasMaxLength(40);
             entity.Property(e => e.Description).HasColumnType("ntext");
             entity.Property(e => e.Name).HasMaxLength(50);
             entity.Property(e => e.TrailerLink).HasMaxLength(60);

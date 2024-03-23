@@ -42,8 +42,15 @@ public partial class Film : Entity
         set { price = value < 0 ? 0 : value; }
     }
 
+   
+    private int? boxOffice;
     [Display(Name = "Касовий збір")]
-    public string? BoxOffice { get; set; }
+    [Range(0, int.MaxValue, ErrorMessage = "Касовий збір не може бути від'ємним")]
+    public int? BoxOffice
+    {
+        get { return boxOffice; }
+        set { boxOffice = value < 0 ? 0 : value; }
+    }
 
     [Display(Name = "Актори та ролі")]
     public virtual ICollection<ActorsFilm> ActorsFilms { get; set; } = new List<ActorsFilm>();

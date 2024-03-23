@@ -10,16 +10,21 @@ using FilmsInfrastructure;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using System.IO;
 using Microsoft.IdentityModel.Tokens;
+using DocumentFormat.OpenXml.Vml.Office;
+using FilmsInfrastructure.Services;
 
 namespace FilmsInfrastructure.Controllers
 {
     public class FilmsController : Controller
     {
         private readonly DbfilmsContext _context;
+        private readonly IDataPortServiceFactory<Film> _categoryDataPortServiceFactory;
+
 
         public FilmsController(DbfilmsContext context)
         {
             _context = context;
+            _categoryDataPortServiceFactory = new FilmDataPortServiceFactory(_context);
         }
 
         // GET: Films from Films
@@ -420,6 +425,57 @@ namespace FilmsInfrastructure.Controllers
         {
             int customerId = 25;
             return await _context.Preorders.AnyAsync(p => p.FilmId == filmId && p.CustomerId == customerId && p.Status == "Куплено");
+        }
+
+        [HttpGet]
+        public IActionResult Import()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Import(IFormFile fileExcel, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var importService = _categoryDataPortServiceFactory.GetImportService(fileExcel.ContentType);
+                using var stream = fileExcel.OpenReadStream();
+                await importService.ImportFromStreamAsync(stream, cancellationToken);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception e)
+            {
+               return RedirectToAction("Error", "Home", new { message = e.Message } );
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Export([FromQuery] string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var exportService = _categoryDataPortServiceFactory.GetExportService(contentType);
+
+                var memoryStream = new MemoryStream();
+
+                await exportService.WriteToAsync(memoryStream, cancellationToken);
+
+                await memoryStream.FlushAsync(cancellationToken);
+                memoryStream.Position = 0;
+
+                return new FileStreamResult(memoryStream, contentType)
+                {
+                    FileDownloadName = $"films_{DateTime.UtcNow.ToShortDateString()}.xlsx"
+                };
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Error", "Home", new { message = e.Message, title = "Помилка під час запису до файлу" });
+            }
+
         }
 
     }
