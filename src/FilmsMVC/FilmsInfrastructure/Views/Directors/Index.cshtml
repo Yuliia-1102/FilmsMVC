@@ -7,7 +7,11 @@
 <h1>Список режисерів</h1>
 
 <p>
-    <a asp-action="Create">Додати режисера</a>
+    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
+    {
+         <a asp-action="Create">Додати режисера</a>
+    }
+   
 </p>
 <table class="table">
     <thead>
@@ -19,16 +23,23 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model) { 
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Фільми</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
-            </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.Id">Фільми</a>
+
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    }
+                </td>
         </tr>
 }
     </tbody>

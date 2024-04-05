@@ -7,28 +7,29 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FilmsDomain.Model;
 using FilmsInfrastructure;
-using System.IO;
+using FilmsInfrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace FilmsInfrastructure.Controllers
 {
-    [Authorize(Roles = "admin, стажер(-ка)")]
-    public class ActorsController : Controller
+    public class CustomersController : Controller
     {
         private readonly DbfilmsContext _context;
 
-        public ActorsController(DbfilmsContext context)
+        public CustomersController(DbfilmsContext context)
         {
             _context = context;
         }
 
-        // GET: Actors
-        public async Task<IActionResult> Index()
+		// GET: Customers
+
+		public async Task<IActionResult> Index()
         {
-            return View(await _context.Actors.ToListAsync());
+            return View(await _context.Customers.ToListAsync());
         }
 
-        // GET: Actors/Details/5
+        // GET: Customers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,45 +37,39 @@ namespace FilmsInfrastructure.Controllers
                 return NotFound();
             }
 
-            var actor = await _context.Actors
+            var customer = await _context.Customers
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (actor == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return View(actor);
+            return View(customer);
         }
 
-        // GET: Actors/Create
+        // GET: Customers/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Actors/Create
+        // POST: Customers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Id")] Actor actor)
+        public async Task<IActionResult> Create([Bind("Name,Email,CardNumber,Id")] Customer customer)
         {
-            if (_context.Actors.Any(g => g.Name == actor.Name))
-            {
-                ModelState.AddModelError("Name", "Такий актор вже існує.");
-                return View(actor);
-            }
-
             if (ModelState.IsValid)
             {
-                _context.Add(actor);
+                _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(actor);
+            return View(customer);
         }
 
-        // GET: Actors/Edit/5
+        // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -82,23 +77,22 @@ namespace FilmsInfrastructure.Controllers
                 return NotFound();
             }
 
-            var actor = await _context.Actors.FindAsync(id);
-            if (actor == null)
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
             {
                 return NotFound();
             }
-
-            return View(actor);
+            return View(customer);
         }
 
-        // POST: Actors/Edit/5
+        // POST: Customers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Id")] Actor actor)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Email,CardNumber,Id")] Customer customer)
         {
-            if (id != actor.Id)
+            if (id != customer.Id)
             {
                 return NotFound();
             }
@@ -107,17 +101,12 @@ namespace FilmsInfrastructure.Controllers
             {
                 try
                 {
-                    if (_context.Actors.Any(g => g.Name == actor.Name))
-                    {
-                        ModelState.AddModelError("Name", "Такий актор вже існує.");
-                        return View(actor);
-                    }
-                    _context.Update(actor);
+                    _context.Update(customer);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ActorExists(actor.Id))
+                    if (!CustomerExists(customer.Id))
                     {
                         return NotFound();
                     }
@@ -128,10 +117,10 @@ namespace FilmsInfrastructure.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(actor);
+            return View(customer);
         }
 
-        // GET: Actors/Delete/5
+        // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -139,34 +128,34 @@ namespace FilmsInfrastructure.Controllers
                 return NotFound();
             }
 
-            var actor = await _context.Actors
+            var customer = await _context.Customers
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (actor == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return View(actor);
+            return View(customer);
         }
 
-        // POST: Actors/Delete/5
+        // POST: Customers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var actor = await _context.Actors.FindAsync(id);
-            if (actor != null)
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer != null)
             {
-                _context.Actors.Remove(actor);
+                _context.Customers.Remove(customer);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ActorExists(int id)
+        private bool CustomerExists(int id)
         {
-            return _context.Actors.Any(e => e.Id == id);
+            return _context.Customers.Any(e => e.Id == id);
         }
     }
 }

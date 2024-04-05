@@ -37,15 +37,21 @@
         <button type="submit" class="btn btn-primary">Пошук</button>
     </div>
 
-    <a class="btn btn-outline-info" type="=submit" asp-area="" asp-controller="Films" asp-action="Export">Експортувати дані</a>
-    <a class="btn btn-outline-info" type="=submit" asp-area="" asp-controller="Films" asp-action="Import">Імпортувати дані</a>
+    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
+    {
+        <a class="btn btn-outline-info" type="=submit" asp-area="" asp-controller="Films" asp-action="Export">Експортувати дані</a>
+        <a class="btn btn-outline-info" type="=submit" asp-area="" asp-controller="Films" asp-action="Import">Імпортувати дані</a>
+    }
     
 </form>
 
 
 <h1>Список фільмів</h1>
 <p>
-    <a asp-action="CreateInFilm">Додати фільм</a>
+    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
+    {
+         <a asp-action="CreateInFilm">Додати фільм</a>
+    }
 </p>
 <table class="table">
     <thead>
@@ -76,9 +82,16 @@
             </td>
 
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Детальніше</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.Id">Детальніше</a>
+
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    }
             </td>
         </tr>
 }

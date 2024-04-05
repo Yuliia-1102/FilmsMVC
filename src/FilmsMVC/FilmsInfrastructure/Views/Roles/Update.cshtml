@@ -1,0 +1,26 @@
+﻿@model Microsoft.AspNetCore.Identity.IdentityRole
+
+@{
+    ViewData["Title"] = "Редагування";
+}
+
+<h1>Редагування</h1>
+
+<hr />
+<div class="row" style="margin-top:30px;">
+    <div class="col-md-4">
+        <form asp-action="Update">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label" style="margin-bottom:8px;"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group cat-details-btns filter-btn-box">
+                <input class="btn btn-primary" type="submit" value="Зберегти" />
+            </div>
+        </form>
+    </div>
+</div>

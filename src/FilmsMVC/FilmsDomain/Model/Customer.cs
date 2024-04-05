@@ -6,6 +6,7 @@ namespace FilmsDomain.Model;
 
 public partial class Customer : Entity
 {
+    [Display(Name = "Ім'я")]
     public string? Name { get; set; }
 
     [Display(Name = "Пошта")]

@@ -21,4 +21,5 @@ public partial class Preorder : Entity
 
     [Display(Name = "Фільм")]
     public virtual Film? Film { get; set; }
+
 }

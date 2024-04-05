@@ -1,0 +1,13 @@
+﻿@model Microsoft.AspNetCore.Identity.IdentityRole
+
+@{
+    ViewData["Title"] = "Видалення";
+}
+
+<h3>Видалити роль: @Html.DisplayFor(model => model.Name)</h3>
+<hr />
+
+<form asp-action="Delete" method="post" class="form-group cat-details-btns filter-btn-box">
+    <input type="hidden" name="roleId" value="@Model.Id" />
+    <input class="btn btn-danger" type="submit" value="Видалити" />
+</form>

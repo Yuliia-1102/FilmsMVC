@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FilmsDomain.Model;
 using FilmsInfrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FilmsInfrastructure.Controllers
 {
+    [Authorize(Roles = "admin, стажер(-ка)")]
     public class ActorsFilmsController : Controller
     {
         private readonly DbfilmsContext _context;

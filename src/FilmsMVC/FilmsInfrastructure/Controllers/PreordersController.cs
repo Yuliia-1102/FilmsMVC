@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using FilmsDomain.Model;
 using FilmsInfrastructure;
 using Newtonsoft.Json;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FilmsInfrastructure.Controllers
 {
@@ -23,15 +25,16 @@ namespace FilmsInfrastructure.Controllers
         // GET: Preorders
         public async Task<IActionResult> Index()
         {
-            int customerId = 25; 
+            var customer = _context.Customers.Include(c => c.Preorders).FirstOrDefault(c => c.Email == User.Identity.Name);
 
             var dbfilmsContext = _context.Preorders
                                          .Include(p => p.Customer)
                                          .Include(p => p.Film)
-                                         .Where(p => p.CustomerId == customerId);
+                                         .Where(p => p.CustomerId == customer.Id);
 
             return View(await dbfilmsContext.ToListAsync());
         }
+
 
         // GET: Preorders/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -54,34 +57,35 @@ namespace FilmsInfrastructure.Controllers
         }
 
 		[HttpPost]
-		public async Task<IActionResult> AddToOrder(int filmId)
-		{
-			var film = await _context.Films.FindAsync(filmId);
-			if (film == null)
-			{
-				return NotFound();
-			}
+        public async Task<IActionResult> AddToOrder(int filmId)
+        {
+            var film = await _context.Films.FindAsync(filmId);
+            if (film == null)
+            {
+                return NotFound();
+            }
 
-            int customerId = 25;
+            var customer = _context.Customers.Include(c => c.Preorders).FirstOrDefault(c => c.Email == User.Identity.Name);
 
             var existingPreorder = await _context.Preorders
-            .FirstOrDefaultAsync(p => p.FilmId == filmId && p.CustomerId == customerId);
+            .FirstOrDefaultAsync(p => p.FilmId == filmId && p.CustomerId == customer.Id);
 
             if (existingPreorder == null)
             {
                 var preorder = new Preorder
                 {
                     FilmId = filmId,
-                    CustomerId = customerId,
+                    CustomerId = customer.Id, 
                     Status = null,
-				    PreorderDate = DateOnly.FromDateTime(DateTime.Now)
-			    };
+                    PreorderDate = DateOnly.FromDateTime(DateTime.Now)
+                };
                 _context.Preorders.Add(preorder);
-			    await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
-           
-			return RedirectToAction("Index", "Preorders");
-		}
+
+            return RedirectToAction("Index", "Preorders");
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Order(List<int> preordersId)
@@ -117,7 +121,6 @@ namespace FilmsInfrastructure.Controllers
         {
             return View();
         }
-
 
         public async Task<IActionResult> ProcessPayment(string CardNumber)
         {

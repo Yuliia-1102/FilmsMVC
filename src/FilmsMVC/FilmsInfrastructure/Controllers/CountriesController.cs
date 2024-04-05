@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using FilmsDomain.Model;
 using FilmsInfrastructure;
 using Humanizer.Localisation;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FilmsInfrastructure.Controllers
 {
+    [Authorize(Roles = "admin, стажер(-ка)")]
     public class CountriesController : Controller
     {
         private readonly DbfilmsContext _context;

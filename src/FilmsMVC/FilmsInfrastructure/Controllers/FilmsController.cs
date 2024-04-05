@@ -12,6 +12,7 @@ using System.IO;
 using Microsoft.IdentityModel.Tokens;
 using DocumentFormat.OpenXml.Vml.Office;
 using FilmsInfrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FilmsInfrastructure.Controllers
 {
@@ -19,7 +20,6 @@ namespace FilmsInfrastructure.Controllers
     {
         private readonly DbfilmsContext _context;
         private readonly IDataPortServiceFactory<Film> _categoryDataPortServiceFactory;
-
 
         public FilmsController(DbfilmsContext context)
         {
@@ -423,11 +423,21 @@ namespace FilmsInfrastructure.Controllers
 
         public async Task<bool> IsFilmPurchased(int filmId)
         {
-            int customerId = 25;
-            return await _context.Preorders.AnyAsync(p => p.FilmId == filmId && p.CustomerId == customerId && p.Status == "Куплено");
+            var customer = await _context.Customers
+                                         .Include(c => c.Preorders)
+                                         .FirstOrDefaultAsync(c => c.Email == User.Identity.Name);
+
+            if (customer == null)
+            {
+                return false;
+            }
+
+            return await _context.Preorders.AnyAsync(p => p.FilmId == filmId && p.CustomerId == customer.Id && p.Status == "Куплено");
         }
 
+
         [HttpGet]
+        [Authorize(Roles = "admin,стажер(-ка)")]
         public IActionResult Import()
         {
             return View();
@@ -435,6 +445,7 @@ namespace FilmsInfrastructure.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin,стажер(-ка)")]
         public async Task<IActionResult> Import(IFormFile fileExcel, CancellationToken cancellationToken = default)
         {
             try
@@ -452,6 +463,7 @@ namespace FilmsInfrastructure.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "admin,стажер(-ка)")]
         public async Task<IActionResult> Export([FromQuery] string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             CancellationToken cancellationToken = default)
         {
