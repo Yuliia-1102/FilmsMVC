@@ -6,8 +6,10 @@ namespace FilmsDomain.Model;
 
 public partial class Preorder : Entity
 {
+    [Display(Name = "Фільм")]
     public int FilmId { get; set; }
 
+    [Display(Name = "Пошта клієнта")]
     public int CustomerId { get; set; }
 
     [Display(Name = "Статус замовлення")]

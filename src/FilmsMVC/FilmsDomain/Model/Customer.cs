@@ -6,9 +6,11 @@ namespace FilmsDomain.Model;
 
 public partial class Customer : Entity
 {
+    [Required(ErrorMessage = "Поле не повинно бути порожнім")]
     [Display(Name = "Ім'я")]
     public string? Name { get; set; }
 
+    [Required(ErrorMessage = "Поле не повинно бути порожнім")]
     [Display(Name = "Пошта")]
     public string? Email { get; set; }
 

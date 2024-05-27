@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.Elfie.Serialization;
 using System.IO;
 using Microsoft.IdentityModel.Tokens;
 using DocumentFormat.OpenXml.Vml.Office;
-using FilmsInfrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace FilmsInfrastructure.Controllers
@@ -19,12 +18,10 @@ namespace FilmsInfrastructure.Controllers
     public class FilmsController : Controller
     {
         private readonly DbfilmsContext _context;
-        private readonly IDataPortServiceFactory<Film> _categoryDataPortServiceFactory;
 
         public FilmsController(DbfilmsContext context)
         {
             _context = context;
-            _categoryDataPortServiceFactory = new FilmDataPortServiceFactory(_context);
         }
 
         // GET: Films from Films
@@ -100,7 +97,6 @@ namespace FilmsInfrastructure.Controllers
         // GET: Films/Create
         public IActionResult Create(int directorId)
         {
-            //ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name");
             ViewBag.DirectorId = directorId;
             ViewBag.Name = _context.Directors.Where(d => d.Id == directorId).First().Name;
            
@@ -143,16 +139,6 @@ namespace FilmsInfrastructure.Controllers
                 return RedirectToAction("IndexDirector", "Films", new { id = directorId, name = _context.Directors.Where(d => d.Id == directorId).First().Name });
             }
 
-
-            //_context.Add(film);
-            ///await _context.SaveChangesAsync();
-
-            //return RedirectToAction("IndexDirector", "Films", new { id = directorId, name = _context.Directors.Where(d => d.Id == directorId).First().Name });
-          
-            //ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name", film.DirectorId);
-            //ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name", film.GenreId);
-            //return View(film);
-            //return RedirectToAction("IndexDirector", "Films", new { id = directorId, name = _context.Directors.Where(d => d.Id == directorId).First().Name });
         }
 
         public IActionResult CreateInFilm()
@@ -195,11 +181,6 @@ namespace FilmsInfrastructure.Controllers
                 return RedirectToAction("Index", "Films");
             }
 
-            //}
-            //ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name", film.DirectorId);
-            //ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name", film.GenreId);
-            //return View(film);
-            //return RedirectToAction("IndexDirector", "Films", new { id = directorId, name = _context.Directors.Where(d => d.Id == directorId).First().Name });
         }
 
         // GET: Films/Edit/5
@@ -294,49 +275,6 @@ namespace FilmsInfrastructure.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
-        /*
-        public async Task<IActionResult> Edit(int id, [Bind("GenreId,DirectorId,Name,Description,ReleaseYear,TrailerLink,Price,BoxOffice,Id")] Film film, List<int> Countries, List<int> Actors)
-        {
-            if (id != film.Id)
-            {
-                return NotFound();
-            }
-
-            var filmToUpdate = await _context.Films
-                               .Include(f => f.CountriesFilms)
-                               .Include(f => f.ActorsFilms)
-                               .FirstOrDefaultAsync(f => f.Id == id);
-            
-            _context.Update(filmToUpdate);
-            await _context.SaveChangesAsync();
-            if (ModelState.IsValid)
-            {
-            try
-                {
-                    _context.Update(film);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FilmExists(film.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["DirectorId"] = new SelectList(_context.Directors, "Id", "Name", film.DirectorId);
-            ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "Name", film.GenreId);
-			ViewData["CountriesFilms"] = new SelectList(_context.Countries, "Id", "Name", film.CountriesFilms);
-			ViewData["ActorsFilms"] = new SelectList(_context.Actors, "Id", "Name", film.ActorsFilms);
-			return View(film);
-        }*/
-
         // GET: Films/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -358,8 +296,6 @@ namespace FilmsInfrastructure.Controllers
                 return NotFound();
             }
 
-           
-
             return View(film);
         }
 
@@ -368,12 +304,6 @@ namespace FilmsInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            /*var film = await _context.Films.FindAsync(id);
-            if (film != null)
-            {
-                _context.Films.Remove(film);
-            }*/
-
             var countriesFilms = await _context.CountriesFilms
                                 .Where(cf => cf.FilmId == id)
                                 .ToListAsync();
@@ -423,71 +353,8 @@ namespace FilmsInfrastructure.Controllers
 
         public async Task<bool> IsFilmPurchased(int filmId)
         {
-            var customer = await _context.Customers
-                                         .Include(c => c.Preorders)
-                                         .FirstOrDefaultAsync(c => c.Email == User.Identity.Name);
-
-            if (customer == null)
-            {
-                return false;
-            }
-
-            return await _context.Preorders.AnyAsync(p => p.FilmId == filmId && p.CustomerId == customer.Id && p.Status == "Куплено");
-        }
-
-
-        [HttpGet]
-        [Authorize(Roles = "admin,стажер(-ка)")]
-        public IActionResult Import()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin,стажер(-ка)")]
-        public async Task<IActionResult> Import(IFormFile fileExcel, CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var importService = _categoryDataPortServiceFactory.GetImportService(fileExcel.ContentType);
-                using var stream = fileExcel.OpenReadStream();
-                await importService.ImportFromStreamAsync(stream, cancellationToken);
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception e)
-            {
-               return RedirectToAction("Error", "Home", new { message = e.Message } );
-            }
-        }
-
-
-        [HttpGet]
-        [Authorize(Roles = "admin,стажер(-ка)")]
-        public async Task<IActionResult> Export([FromQuery] string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var exportService = _categoryDataPortServiceFactory.GetExportService(contentType);
-
-                var memoryStream = new MemoryStream();
-
-                await exportService.WriteToAsync(memoryStream, cancellationToken);
-
-                await memoryStream.FlushAsync(cancellationToken);
-                memoryStream.Position = 0;
-
-                return new FileStreamResult(memoryStream, contentType)
-                {
-                    FileDownloadName = $"films_{DateTime.UtcNow.ToShortDateString()}.xlsx"
-                };
-            }
-            catch (Exception e)
-            {
-                return RedirectToAction("Error", "Home", new { message = e.Message, title = "Помилка під час запису до файлу" });
-            }
-
+            int customerId = 32; 
+            return await _context.Preorders.AnyAsync(p => p.FilmId == filmId && p.CustomerId == customerId && p.Status == "Куплено");
         }
 
     }

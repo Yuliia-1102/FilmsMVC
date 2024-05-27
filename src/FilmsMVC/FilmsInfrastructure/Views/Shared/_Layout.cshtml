@@ -33,8 +33,7 @@
 						<li class="nav-item">
 							<a class="nav-link text-dark" asp-area="" asp-controller="Genres" asp-action="Index">Жанри</a>
 						</li>
-                        @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
-                        {
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Countries" asp-action="Index">Країни</a>
                             </li>
@@ -44,71 +43,21 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="ActorsFilms" asp-action="Index">Персонажі</a>
                             </li>
-                        }
-                        
-                        @if (User.Identity.IsAuthenticated && (User.IsInRole("admin")))
-                        {
+                         
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Roles" asp-action="Index">Ролі користувачів</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Preorders" asp-action="Index">Замовлення</a>
+						</li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Customers" asp-action="Index">Покупці</a>
                         </li>
-                        }
-                        
-                        @if (User.Identity.IsAuthenticated && User.IsInRole("user"))
-                        {
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Preorders" asp-action="Index">Мої замовлення</a>
-						</li>  
-                        }
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Queries" asp-action="Index">Запити</a>
+                        </li>
+                        
                     </ul>
 				</div>
-            </div>
-
-            <div>
-               
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <style>
-                    .user-info {
-                     display: flex; 
-                     align-items: center; 
-                     color: black; 
-                     }
-                    .user-info p {
-                     margin-right: 10px;
-                     margin-bottom: 0;
-                     }
-                    .user-info form {
-                     margin-bottom: 0; 
-                }
-                    </style>
-
-                <div class="user-info">
-                    <p>@User.Identity.Name</p>
-                  <form method="post" asp-controller="Account" asp-action="Logout">
-                    <input type="submit" value="Вихід" />
-                  </form>
-                </div>  
-                }
-                else
-                {  <style>
-                    .header_user {
-                        display: flex;
-                        justify-content: start;
-                    }
-                        .header_user a {
-                            margin-right: 10px; 
-                        }
-                            .header_user a:last-child {
-                                margin-right: 0; 
-                            }
-                    </style>
-
-                    <div class="header_user">
-                        <a input type="submit" class="btn btn-primary" asp-controller="Account" asp-action="Register">Реєстрація</a>
-                        <a input type="submit" class="btn btn-primary" asp-controller="Account" asp-action="Login">Вхід</a>
-                    </div>
-                }
-
             </div>
 
 
@@ -122,7 +71,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - Лабораторна 1: замовлення фільмів - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - Лабораторна 2: замовлення фільмів - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

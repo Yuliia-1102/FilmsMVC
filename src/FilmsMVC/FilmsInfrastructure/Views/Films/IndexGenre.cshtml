@@ -85,16 +85,13 @@
                     }
                 </td>
                 <td>
-                    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
-                    }
+                   
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
+                    
                     <a asp-action="Details" asp-route-id="@item.Id">Детальніше</a>
 
-                    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
-                    {
-                        <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
-                    }
+                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    
                 </td>
             </tr>
         }

@@ -1,0 +1,239 @@
+﻿@model FilmsDomain.Model.Query
+
+@{
+    ViewBag.Title = "Результати пошуку";
+}
+
+<h2 class="mt-4">Результати пошуку</h2>
+
+@if (Model.QueryName == "П1")
+{
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Назва фільму</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var film in Model.FilmNames)
+                {
+                    <tr>
+                        <td>@film</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+ @if (Model.QueryName == "П2")
+{
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Ім'я актора</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var actor in Model.ActorNames)
+                {
+                    <tr>
+                        <td>@actor</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (Model.QueryName == "П3")
+{
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Назва фільму</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var film in Model.FilmNames)
+                {
+                    <tr>
+                        <td>@film</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (Model.QueryName == "П4")
+{
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <p>Сума цін фільмів, які не замовив покупець: @Model.TotalPrice грн</p>
+    }
+}
+
+@if (Model.QueryName == "П5")
+{
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Назва фільму</th>
+                    <th>Трейлер</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.FilmNames.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.FilmNames[i]</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(Model.TrailerLinks[i]))
+                            {
+                                <a href="@Model.TrailerLinks[i]" target="_blank">Переглянути трейлер</a>
+                            }
+                            else
+                            {
+                                <span>Немає трейлера</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (Model.QueryName == "С1")
+{
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <p>Клієнти, які купили всі фільми з ціною @Model.Price грн:</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ім'я</th>
+                    <th>Пошта</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.CustomerNames.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.CustomerNames[i]</td>
+                        <td>@Model.CustomerEmails[i]</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (Model.QueryName == "С2")
+{
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <p>Фільми, які містять ТИХ І ТІЛЬКИ ТИХ самих акторів, що і заданий фільм:</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Назва фільму</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var filmName in Model.FilmNames)
+                {
+                    <tr>
+                        <td>@filmName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+
+@if (Model.QueryName == "С3")
+@if (Model.ErrorFlag == 1)
+{
+    <div class="alert alert-danger" role="alert">
+        @Model.ErrorName
+    </div>
+}
+else
+{
+    <h3>Клієнти, які купили тільки ті фільми, що і заданий покупець, і обов'язково ще якісь</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ім'я</th>
+                <th>Пошта</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.CustomerNames.Count; i++)
+            {
+                <tr>
+                    <td>@Model.CustomerNames[i]</td>
+                    <td>@Model.CustomerEmails[i]</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+<div class="mt-4">
+    <a asp-controller="Queries" asp-action="Index" class="btn btn-secondary btn-lg">Назад</a>
+</div>

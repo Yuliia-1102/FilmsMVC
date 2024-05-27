@@ -4,8 +4,11 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Мої замовлення</h1>
-        
+<h1>Всі замовлення</h1>
+<p>
+    <a asp-action="Create">Додати замовлення</a>
+
+</p>
 
 <table class="table">
     <thead>
@@ -44,11 +47,8 @@
                 </td>
 
                 <td>
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("user") && item.Status == null)
-                    {
-                        <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
-                    }
-
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
                 </td>
             </tr>
         }
@@ -56,10 +56,7 @@
 
 	</tbody>
 </table>
-<form asp-controller="Preorders" asp-action="Order" method="post">
-    @for (int i = 0; i < Model.Count(); i++)
-    {
-        <input type="hidden" name="preordersId[@i]" value="@Model.ElementAt(i).Id" />
-    }
-    <input type="submit" value="Замовити фільми" class="btn btn-primary" />
-</form>
+
+<div class="mt-4">
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg">До головної сторінки</a>
+</div>

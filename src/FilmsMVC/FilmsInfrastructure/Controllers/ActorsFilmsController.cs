@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FilmsInfrastructure.Controllers
 {
-    [Authorize(Roles = "admin, стажер(-ка)")]
     public class ActorsFilmsController : Controller
     {
         private readonly DbfilmsContext _context;

@@ -45,8 +45,6 @@ namespace FilmsInfrastructure.Controllers
             //return View(director);
             return RedirectToAction("IndexDirector", "Films", new { id = director.Id, name = director.Name });
         }
-
-        [Authorize(Roles = "admin, стажер(-ка)")]
         // GET: Directors/Create
         public IActionResult Create()
         {
@@ -58,7 +56,6 @@ namespace FilmsInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin, стажер(-ка)")]
         public async Task<IActionResult> Create([Bind("Name,Id")] Director director)
         {
             if (_context.Directors.Any(g => g.Name == director.Name))
@@ -77,7 +74,6 @@ namespace FilmsInfrastructure.Controllers
         }
 
         // GET: Directors/Edit/5
-        [Authorize(Roles = "admin, стажер(-ка)")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -98,7 +94,6 @@ namespace FilmsInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin, стажер(-ка)")]
         public async Task<IActionResult> Edit(int id, [Bind("Name,Id")] Director director)
         {
             if (id != director.Id)
@@ -135,7 +130,7 @@ namespace FilmsInfrastructure.Controllers
         }
 
         // GET: Directors/Delete/5
-        [Authorize(Roles = "admin,стажер(-ка)")]
+        
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -156,7 +151,6 @@ namespace FilmsInfrastructure.Controllers
         // POST: Directors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin,стажер(-ка)")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var director = await _context.Directors.FindAsync(id);

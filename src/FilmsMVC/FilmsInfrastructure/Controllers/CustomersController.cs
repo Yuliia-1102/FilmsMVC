@@ -58,8 +58,13 @@ namespace FilmsInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Email,CardNumber,Id")] Customer customer)
+        public async Task<IActionResult> Create([Bind("Name,Email,Id")] Customer customer)
         {
+            if (_context.Customers.Any(c => c.Email == customer.Email))
+            {
+                ModelState.AddModelError("Email", "Клієнт з такою електронною поштою вже існує.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(customer);
@@ -90,11 +95,16 @@ namespace FilmsInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Email,CardNumber,Id")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Email,Id")] Customer customer)
         {
             if (id != customer.Id)
             {
                 return NotFound();
+            }
+
+            if (_context.Customers.Any(c => c.Email == customer.Email && c.Id != customer.Id))
+            {
+                ModelState.AddModelError("Email", "Клієнт з такою електронною поштою вже існує.");
             }
 
             if (ModelState.IsValid)

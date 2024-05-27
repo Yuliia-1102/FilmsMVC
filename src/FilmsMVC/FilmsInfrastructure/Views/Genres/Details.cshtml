@@ -19,9 +19,8 @@
     </dl>
 </div>
 <div>
-    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
-    {
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a>
-    }
+    
+     <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a>
+    
     <a asp-action="Index">Back to List</a>
 </div>

@@ -1,0 +1,150 @@
+﻿@model FilmsDomain.Model.Query
+
+@{
+    ViewBag.Title = "Запити";
+}
+
+<div class="container">
+    <h3>Прості</h3>
+
+    <div class="mt-4">
+        <p>1. Знайти назви усіх фільмів, що купив певний клієнт.</p>
+        @using (Html.BeginForm("Query1", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerName, "Ім'я покупця")
+                @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @placeholder = "Введіть ім'я покупця", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
+    <div class="mt-5">
+        <p>2. Знайти імена акторів із заданої назви фільму, які зіграли принаймні ще в одному фільмі.</p>
+        @using (Html.BeginForm("Query2", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FilmName, "Назва фільму")
+                @Html.TextBoxFor(model => model.FilmName, new { @class = "form-control", @placeholder = "Введіть назву фільму", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.FilmName, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
+    <div class="mt-5">
+        <p>3. Знайти назви фільмів, що обов'язково мають хоча б країну-виробника США, вказаного режисера.</p>
+        @using (Html.BeginForm("Query3", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DirectorName, "Ім'я режисера")
+                @Html.TextBoxFor(model => model.DirectorName, new { @class = "form-control", @placeholder = "Введіть ім'я режисера", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.DirectorName, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
+
+    <div class="mt-5">
+        <p>4. Знайти суму цін усіх фільмів, які НЕ купив вказаний клієнт.</p>
+        @using (Html.BeginForm("Query4", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerName, "Ім'я покупця")
+                @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @placeholder = "Введіть ім'я покупця", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
+    <div class="mt-5">
+        <p>5. Знайти назви фільмів та їхні трейлери вказаного жанру, випущених після заданого року.</p>
+        @using (Html.BeginForm("Query5", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.GenreName, "Жанр")
+                @Html.TextBoxFor(model => model.GenreName, new { @class = "form-control", @placeholder = "Введіть жанр", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.GenreName, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.ReleaseYear, "Рік випуску")
+                @Html.TextBoxFor(model => model.ReleaseYear, new { @class = "form-control", @placeholder = "Введіть рік випуску", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.ReleaseYear, "", new { @class = "text-danger" })
+                
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
+</div>
+
+
+<div class="container mt-5">
+    <h3>Складні</h3>
+
+    <div class="mt-5">
+        <p>1. Знайти клієнтів (їхні імена та пошти), які купили ВСІ фільми з заданою ціною.</p>
+        @using (Html.BeginForm("Query6", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Price, "Ціна фільму")
+                @Html.TextBoxFor(model => model.Price, new { @class = "form-control", @placeholder = "Введіть ціну", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
+    <div class="mt-5">
+        <p>2. Знайти фільми, які містять ТИХ І ТІЛЬКИ ТИХ самих акторів, що і заданий фільм.</p>
+        @using (Html.BeginForm("Query7", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FilmName, "Назва фільму")
+                @Html.TextBoxFor(model => model.FilmName, new { @class = "form-control", @placeholder = "Введіть назву фільму", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.FilmName, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
+    <div class="mt-5">
+        <p>3. Знайти покупців, які купили ТІЛЬКИ ті фільми, що і заданий покупець, і обов'язково ЩЕ якісь.</p>
+        @using (Html.BeginForm("Query8", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerName, "Ім'я покупця")
+                @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @placeholder = "Введіть ім'я покупця", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
+</div>
+
+<div class="mt-4">
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg">До головної сторінки</a>
+</div>
+
+
+

@@ -4,54 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<form asp-action="Search" method="post">
-    <div class="mb-3">
-        <label class="form-label">Вкажіть жанр</label>
-        <select class="form-select" asp-items="ViewBag.GenreId" name="genre">
-            <option value=""></option>
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Вкажіть режисера</label>
-        <select class="form-select" asp-items="ViewBag.DirectorId" name="director">
-            <option value=""></option>
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Вкажіть країну</label>
-        <select class="form-select" asp-items="ViewBag.CountriesFilms" name="country">
-            <option value=""></option>
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Вкажіть актора(-ису)</label>
-        <select class="form-select" asp-items="ViewBag.ActorsFilms" name="actor">
-            <option value=""></option>
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <button type="submit" class="btn btn-primary">Пошук</button>
-    </div>
-
-    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
-    {
-        <a class="btn btn-outline-info" type="=submit" asp-area="" asp-controller="Films" asp-action="Export">Експортувати дані</a>
-        <a class="btn btn-outline-info" type="=submit" asp-area="" asp-controller="Films" asp-action="Import">Імпортувати дані</a>
-    }
-    
-</form>
-
-
 <h1>Список фільмів</h1>
 <p>
-    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
-    {
-         <a asp-action="CreateInFilm">Додати фільм</a>
-    }
+    <a asp-action="CreateInFilm">Додати фільм</a>
+    
 </p>
 <table class="table">
     <thead>
@@ -82,16 +38,11 @@
             </td>
 
             <td>
-                    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
-                    }
-                    <a asp-action="Details" asp-route-id="@item.Id">Детальніше</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
 
-                    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin") || User.IsInRole("стажер(-ка)")))
-                    {
-                        <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
-                    }
+                    <a asp-action="Details" asp-route-id="@item.Id">Детальніше</a> |
+
+                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
             </td>
         </tr>
 }
@@ -101,38 +52,8 @@
     </tbody>
 </table>
 
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<div id="chart_div"></div>
 
-<script>
-    google.charts.load('current', { 'packages': ['corechart'] });
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-        fetch('/api/Chart/FilmsByYear')
-            .then(response => response.json())
-            .then(data => {
-                var dataArray = [['Рік', 'Кількість фільмів']];
-                data.forEach(item => dataArray.push([item.year.toString(), item.count]));
-
-                var data = google.visualization.arrayToDataTable(dataArray);
-
-                var options = {
-                    title: 'Кількість фільмів за певним роком',
-                    chartArea: { width: '50%' },
-                    hAxis: {
-                        title: 'Рік',
-                        minValue: 0
-                    },
-                    vAxis: {
-                        title: 'Кількість фільмів'
-                    }
-                };
-
-                var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-                chart.draw(data, options);
-            });
-    }
-</script>
-
+<div class="mt-4">
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg">До головної сторінки</a>
+</div>
 

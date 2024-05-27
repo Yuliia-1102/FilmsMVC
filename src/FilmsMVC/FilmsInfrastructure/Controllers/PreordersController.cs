@@ -25,12 +25,11 @@ namespace FilmsInfrastructure.Controllers
         // GET: Preorders
         public async Task<IActionResult> Index()
         {
-            var customer = _context.Customers.Include(c => c.Preorders).FirstOrDefault(c => c.Email == User.Identity.Name);
+            //int customerId = 32;
 
             var dbfilmsContext = _context.Preorders
                                          .Include(p => p.Customer)
-                                         .Include(p => p.Film)
-                                         .Where(p => p.CustomerId == customer.Id);
+                                         .Include(p => p.Film);
 
             return View(await dbfilmsContext.ToListAsync());
         }
@@ -131,12 +130,9 @@ namespace FilmsInfrastructure.Controllers
             {
                 var preordersToDelete = _context.Preorders.Where(p => preordersIdList.Contains(p.Id)).ToList();
                
-                //List<int> filmIds = new List<int>();
                 foreach (var preorder in preordersToDelete)
                 {
                     preorder.Status = "Куплено";
-                    //filmIds.Add(preorder.FilmId);
-                   // _context.Preorders.Remove(preorder);
                 }
 
                 await _context.SaveChangesAsync();
@@ -148,7 +144,8 @@ namespace FilmsInfrastructure.Controllers
         public IActionResult Create()
         {
             ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email");
-            ViewData["FilmId"] = new SelectList(_context.Films, "Id", "Description");
+            ViewData["FilmId"] = new SelectList(_context.Films, "Id", "Name");
+            ViewData["Status"] = new SelectList(new List<string> { "", "Куплено" });
             return View();
         }
 
@@ -157,16 +154,18 @@ namespace FilmsInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FilmId,CustomerId,PreorderDate,Id")] Preorder preorder)
+        public async Task<IActionResult> Create([Bind("FilmId,CustomerId,Id,Status")] Preorder preorder)
         {
             if (ModelState.IsValid)
             {
+                preorder.PreorderDate = DateOnly.FromDateTime(DateTime.Now);
                 _context.Add(preorder);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", preorder.CustomerId);
-            ViewData["FilmId"] = new SelectList(_context.Films, "Id", "Description", preorder.FilmId);
+            ViewData["FilmId"] = new SelectList(_context.Films, "Id", "Name", preorder.FilmId);
+            ViewData["Status"] = new SelectList(new List<string> { "", "Куплено" }, preorder.Status);
             return View(preorder);
         }
 
@@ -184,14 +183,15 @@ namespace FilmsInfrastructure.Controllers
                 return NotFound();
             }
             ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", preorder.CustomerId);
-            ViewData["FilmId"] = new SelectList(_context.Films, "Id", "Description", preorder.FilmId);
+            ViewData["FilmId"] = new SelectList(_context.Films, "Id", "Name", preorder.FilmId);
+            ViewData["Status"] = new SelectList(new List<string> { "", "Куплено" }, preorder.Status);
             return View(preorder);
         }
 
         // POST: Preorders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FilmId,CustomerId,PreorderDate,Id")] Preorder preorder)
+        public async Task<IActionResult> Edit(int id, [Bind("FilmId,CustomerId,PreorderDate,Id,Status")] Preorder preorder)
         {
             if (id != preorder.Id)
             {
@@ -219,7 +219,8 @@ namespace FilmsInfrastructure.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", preorder.CustomerId);
-            ViewData["FilmId"] = new SelectList(_context.Films, "Id", "Description", preorder.FilmId);
+            ViewData["FilmId"] = new SelectList(_context.Films, "Id", "Name", preorder.FilmId);
+            ViewData["Status"] = new SelectList(new List<string> { "", "Куплено" }, preorder.Status);
             return View(preorder);
         }
 
