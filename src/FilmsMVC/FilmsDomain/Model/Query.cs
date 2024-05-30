@@ -41,6 +41,9 @@ namespace FilmsDomain.Model
 
         public List<string> CustomerEmails { get; set; } = new List<string>();
 
+        [Required(ErrorMessage = "Поле не повинно бути порожнім.")]
+        public string ActorName { get; set; }
+        public List<string> GenreNames { get; set; } = new List<string>();
         public string ErrorName { get; set; }
 
         public int ErrorFlag { get; set; }

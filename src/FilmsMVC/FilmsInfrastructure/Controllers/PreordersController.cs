@@ -156,6 +156,16 @@ namespace FilmsInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("FilmId,CustomerId,Id,Status")] Preorder preorder)
         {
+            var existingPreorder = _context.Preorders
+        .Include(p => p.Customer)
+        .Include(p => p.Film)
+        .FirstOrDefault(p => p.CustomerId == preorder.CustomerId && p.FilmId == preorder.FilmId);
+
+            if (existingPreorder != null)
+            {
+                ModelState.AddModelError(string.Empty, "Замовлення з такою електронною поштою клієнта та назвою фільму вже існує.");
+            }
+
             if (ModelState.IsValid)
             {
                 preorder.PreorderDate = DateOnly.FromDateTime(DateTime.Now);
@@ -196,6 +206,16 @@ namespace FilmsInfrastructure.Controllers
             if (id != preorder.Id)
             {
                 return NotFound();
+            }
+
+            var existingPreorder = _context.Preorders
+        .Include(p => p.Customer)
+        .Include(p => p.Film)
+        .FirstOrDefault(p => p.CustomerId == preorder.CustomerId && p.FilmId == preorder.FilmId && p.Id != preorder.Id);
+
+            if (existingPreorder != null)
+            {
+                ModelState.AddModelError(string.Empty, "Замовлення з такою електронною поштою клієнта та назвою фільму вже існує.");
             }
 
             if (ModelState.IsValid)

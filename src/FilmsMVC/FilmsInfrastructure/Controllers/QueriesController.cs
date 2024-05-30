@@ -15,14 +15,18 @@ namespace FilmsInfrastructure.Controllers
         private const string Q3_PATH = @"C:\Users\Asus\source\repos\src\FilmsMVC\FilmsInfrastructure\Queries\П3.sql";
         private const string Q4_PATH = @"C:\Users\Asus\source\repos\src\FilmsMVC\FilmsInfrastructure\Queries\П4.sql";
         private const string Q5_PATH = @"C:\Users\Asus\source\repos\src\FilmsMVC\FilmsInfrastructure\Queries\П5.sql";
+        private const string Q11_PATH = @"C:\Users\Asus\source\repos\src\FilmsMVC\FilmsInfrastructure\Queries\П6.sql";
 
         private const string Q6_PATH = @"C:\Users\Asus\source\repos\src\FilmsMVC\FilmsInfrastructure\Queries\С1.sql";
         private const string Q7_PATH = @"C:\Users\Asus\source\repos\src\FilmsMVC\FilmsInfrastructure\Queries\С2.sql";
         private const string Q8_PATH = @"C:\Users\Asus\source\repos\src\FilmsMVC\FilmsInfrastructure\Queries\С3.sql";
+        private const string Q9_PATH = @"C:\Users\Asus\source\repos\src\FilmsMVC\FilmsInfrastructure\Queries\С4.sql";
+        private const string Q10_PATH = @"C:\Users\Asus\source\repos\src\FilmsMVC\FilmsInfrastructure\Queries\С5.sql";
 
         private const string ERR_FILM = "Фільми, що задовольняють дану умову, відсутні.";
         private const string ERR_ACTORS = "Актори, що задовольняють дану умову, відсутні.";
         private const string ERR_CUSTOMERS = "Клієнти, що задовольняють дану умову, відсутні.";
+        private const string ERR_GENRES = "Жанри, що задовольняють дану умову, відсутні.";
 
         private readonly DbfilmsContext _context;
         public QueriesController(DbfilmsContext context)
@@ -451,6 +455,169 @@ namespace FilmsInfrastructure.Controllers
                             {
                                 queryModel.ErrorFlag = 1;
                                 queryModel.ErrorName = ERR_CUSTOMERS;
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                queryModel.ErrorFlag = 1;
+                queryModel.ErrorName = "Виникла помилка при виконанні запиту: " + ex.Message;
+            }
+
+            return RedirectToAction("Results", queryModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Query9(Query queryModel)
+        {
+            if (string.IsNullOrEmpty(queryModel.CustomerName))
+            {
+                ViewBag.ErrorFlag = 1;
+                ViewBag.QuantityError8 = "Будь ласка, введіть ім'я покупця.";
+                return View("Index", queryModel);
+            }
+
+            var customerId = _context.Customers.Where(c => c.Name == queryModel.CustomerName).Select(c => c.Id).FirstOrDefault();
+
+            string query = System.IO.File.ReadAllText(Q9_PATH);
+
+            queryModel.CustomerNames = new List<string>();
+            queryModel.CustomerEmails = new List<string>();
+            queryModel.QueryName = "С4";
+
+            try
+            {
+                using (var connection = new SqlConnection(CONNECTION))
+                {
+                    connection.Open();
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@CustomerId", customerId);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            int flag = 0;
+                            while (reader.Read())
+                            {
+                                queryModel.CustomerNames.Add(reader.GetString(0));
+                                queryModel.CustomerEmails.Add(reader.GetString(1));
+                                flag++;
+                            }
+
+                            if (flag == 0)
+                            {
+                                queryModel.ErrorFlag = 1;
+                                queryModel.ErrorName = ERR_CUSTOMERS;
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                queryModel.ErrorFlag = 1;
+                queryModel.ErrorName = "Виникла помилка при виконанні запиту: " + ex.Message;
+            }
+
+            return RedirectToAction("Results", queryModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Query10(Query queryModel)
+        {
+            if (string.IsNullOrEmpty(queryModel.ActorName))
+            {
+                ViewBag.ErrorFlag = 1;
+                ViewBag.QuantityError10 = "Будь ласка, введіть ім'я актора.";
+                return View("Index", queryModel);
+            }
+
+            string query = System.IO.File.ReadAllText(Q10_PATH);
+
+            queryModel.ActorNames = new List<string>();
+            queryModel.QueryName = "С5";
+
+            try
+            {
+                using (var connection = new SqlConnection(CONNECTION))
+                {
+                    connection.Open();
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ActorName", queryModel.ActorName);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            int flag = 0;
+                            while (reader.Read())
+                            {
+                                queryModel.ActorNames.Add(reader.GetString(0));
+                                flag++;
+                            }
+
+                            if (flag == 0)
+                            {
+                                queryModel.ErrorFlag = 1;
+                                queryModel.ErrorName = ERR_ACTORS;
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                queryModel.ErrorFlag = 1;
+                queryModel.ErrorName = "Виникла помилка при виконанні запиту: " + ex.Message;
+            }
+
+            return RedirectToAction("Results", queryModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Query11(Query queryModel)
+        {
+            if (string.IsNullOrEmpty(queryModel.CustomerName))
+            {
+                ViewBag.ErrorFlag = 1;
+                ViewBag.QuantityError11 = "Будь ласка, введіть ім'я покупця.";
+                return View("Index", queryModel);
+            }
+
+            string query = System.IO.File.ReadAllText(Q11_PATH);
+
+            queryModel.GenreNames = new List<string>();
+            queryModel.QueryName = "П6";
+
+            try
+            {
+                using (var connection = new SqlConnection(CONNECTION))
+                {
+                    connection.Open();
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@CustomerName", queryModel.CustomerName);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            int flag = 0;
+                            while (reader.Read())
+                            {
+                                queryModel.GenreNames.Add(reader.GetString(0));
+                                flag++;
+                            }
+
+                            if (flag == 0)
+                            {
+                                queryModel.ErrorFlag = 1;
+                                queryModel.ErrorName = ERR_GENRES;
                             }
                         }
                     }

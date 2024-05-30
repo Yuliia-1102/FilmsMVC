@@ -143,6 +143,37 @@
     }
 }
 
+
+@if (Model.QueryName == "П6")
+{
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <p>Жанри, які відповідають купленим фільмам покупця @Model.CustomerName:
+        </p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Назва жанру</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var genreName in Model.GenreNames)
+                {
+                    <tr>
+                        <td>@genreName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
 @if (Model.QueryName == "С1")
 {
     @if (Model.ErrorFlag == 1)
@@ -205,34 +236,97 @@
 
 
 @if (Model.QueryName == "С3")
-@if (Model.ErrorFlag == 1)
 {
-    <div class="alert alert-danger" role="alert">
-        @Model.ErrorName
-    </div>
-}
-else
-{
-    <h3>Клієнти, які купили тільки ті фільми, що і заданий покупець, і обов'язково ще якісь</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Ім'я</th>
-                <th>Пошта</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.CustomerNames.Count; i++)
-            {
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <p>Клієнти, які замовили тільки ті фільми, що і заданий покупець, і обов'язково ще якісь:</p>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@Model.CustomerNames[i]</td>
-                    <td>@Model.CustomerEmails[i]</td>
+                    <th>Ім'я</th>
+                    <th>Пошта</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.CustomerNames.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.CustomerNames[i]</td>
+                        <td>@Model.CustomerEmails[i]</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
 
+@if (Model.QueryName == "С4")
+{
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <p>Клієнти, які замовили тільки ті фільми, що і заданий покупець, і можливо ще якісь:</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ім'я</th>
+                    <th>Пошта</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.CustomerNames.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.CustomerNames[i]</td>
+                        <td>@Model.CustomerEmails[i]</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+
+@if (Model.QueryName == "С5")
+{
+    @if (Model.ErrorFlag == 1)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorName
+        </div>
+    }
+    else
+    {
+        <p>Актори, які знялися хоча б в одному фільмі з актором @Model.ActorName:
+        </p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ім'я актора</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var actorName in Model.ActorNames)
+                {
+                    <tr>
+                        <td>@actorName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
 
 <div class="mt-4">
     <a asp-controller="Queries" asp-action="Index" class="btn btn-secondary btn-lg">Назад</a>

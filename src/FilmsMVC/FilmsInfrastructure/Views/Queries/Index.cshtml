@@ -38,7 +38,7 @@
     </div>
 
     <div class="mt-5">
-        <p>3. Знайти назви фільмів, що обов'язково мають хоча б країну-виробника США, вказаного режисера.</p>
+        <p>3. Знайти назви фільмів, що були точно зняті в США, вказаного режисера.</p>
         @using (Html.BeginForm("Query3", "Queries", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
@@ -89,6 +89,21 @@
         }
     </div>
 
+    <div class="mt-5">
+        <p>6. Знайти назви жанрів, які відповідають купленим фільмам заданого покупця.</p>
+        @using (Html.BeginForm("Query11", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerName, "Ім'я покупця")
+                @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @placeholder = "Введіть ім'я покупця", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
 </div>
 
 
@@ -126,7 +141,7 @@
     </div>
 
     <div class="mt-5">
-        <p>3. Знайти покупців, які купили ТІЛЬКИ ті фільми, що і заданий покупець, і обов'язково ЩЕ якісь.</p>
+        <p>3. Знайти клієнтів, які замовили ТІЛЬКИ ті фільми, що і заданий покупець, і ОБОВ'ЯЗКОВО ЩЕ якісь.</p>
         @using (Html.BeginForm("Query8", "Queries", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
@@ -135,6 +150,36 @@
                 @Html.LabelFor(model => model.CustomerName, "Ім'я покупця")
                 @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @placeholder = "Введіть ім'я покупця", @style = "width: 300px;" })
                 @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
+    <div class="mt-5">
+        <p>4. Знайти клієнтів, які замовили ТІЛЬКИ ті фільми, що і заданий покупець, і МОЖЛИВО ЩЕ якісь.</p>
+        @using (Html.BeginForm("Query9", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerName, "Ім'я покупця")
+                @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @placeholder = "Введіть ім'я покупця", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
+        }
+    </div>
+
+    <div class="mt-5">
+        <p>5. Знайти акторів, які знялися ХОЧА Б В ОДНОМУ фільмі, що і заданий актор.</p>
+        @using (Html.BeginForm("Query10", "Queries", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ActorName, "Ім'я актора")
+                @Html.TextBoxFor(model => model.ActorName, new { @class = "form-control", @placeholder = "Введіть ім'я актора", @style = "width: 300px;" })
+                @Html.ValidationMessageFor(model => model.ActorName, "", new { @class = "text-danger" })
             </div>
             <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Виконати</button>
         }

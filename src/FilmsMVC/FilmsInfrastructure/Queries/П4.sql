@@ -7,7 +7,7 @@ WHERE f.Id NOT IN (
     WHERE c.Name = @CustomerName AND p.Status = 'Куплено'
 )
 AND EXISTS (
-    SELECT 1
+    SELECT *
     FROM Customers c
     WHERE c.Name = @CustomerName
 );
