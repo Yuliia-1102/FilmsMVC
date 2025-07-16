@@ -237,7 +237,7 @@ namespace FilmsInfrastructure.Controllers
             filmToUpdate.GenreId = film.GenreId;
             filmToUpdate.DirectorId = film.DirectorId;
 
-            // Оновлення акторів
+            // Оновлення акторів / актрис
             var currentActorIds = filmToUpdate.ActorsFilms.Select(af => af.ActorId).ToList();
             var actorsToAdd = Actors.Except(currentActorIds).ToList();
             var actorsToRemove = currentActorIds.Except(Actors).ToList();
